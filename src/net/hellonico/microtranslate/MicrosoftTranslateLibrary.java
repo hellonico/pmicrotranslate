@@ -27,6 +27,12 @@
 
 package net.hellonico.microtranslate;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import com.memetix.mst.language.Language;
+import com.memetix.mst.translate.Translate;
 
 import processing.core.*;
 
@@ -42,63 +48,46 @@ import processing.core.*;
  *
  */
 
-public class HelloLibrary {
+public class MicrosoftTranslateLibrary {
 	
 	// myParent is a reference to the parent sketch
 	PApplet myParent;
-
-	int myVariable = 0;
-	
 	public final static String VERSION = "##library.prettyVersion##";
 	
-
-	/**
-	 * a Constructor, usually called in the setup() method in your sketch to
-	 * initialize and start the library.
-	 * 
-	 * @example Hello
-	 * @param theParent
-	 */
-	public HelloLibrary(PApplet theParent) {
+	public MicrosoftTranslateLibrary(PApplet theParent) {
 		myParent = theParent;
-		welcome();
+		
+		try {
+			Class klass = Class.forName("net.hellonico.potato.Potato");
+			Constructor c = klass.getConstructor(PApplet.class);
+			Object potato = c.newInstance(theParent);
+			Method m = klass.getMethod("getSettings", String.class);
+			HashMap settings = (HashMap) m.invoke(potato, "windows");
+			
+			Translate.setClientId((String)settings.get("clientId"));
+		    Translate.setClientSecret((String)settings.get("appKey"));
+		} catch (Exception e) {
+			throw new RuntimeException("This is carrot day."+e.getMessage());
+		}
 	}
 	
-	
-	private void welcome() {
-		System.out.println("##library.name## ##library.prettyVersion## by ##author##");
-	}
-	
-	
-	public String sayHello() {
-		return "hello library.";
-	}
-	/**
-	 * return the version of the library.
-	 * 
-	 * @return String
-	 */
 	public static String version() {
 		return VERSION;
 	}
-
-	/**
-	 * 
-	 * @param theA
-	 *          the width of test
-	 * @param theB
-	 *          the height of test
-	 */
-	public void setVariable(int theA, int theB) {
-		myVariable = theA + theB;
+	
+	public String translate(String text, String to) {
+		return translate(text, Language.AUTO_DETECT, Language.fromString(to));
+	}
+	public String translate(String text, String from, String to) {
+		return translate(text, Language.fromString(from), Language.fromString(to));
+	}
+	public String translate(String text, Language from, Language to) {
+		try {
+			return Translate.execute(text, from, to);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}		
 	}
 
-	/**
-	 * 
-	 * @return int
-	 */
-	public int getVariable() {
-		return myVariable;
-	}
 }
 
