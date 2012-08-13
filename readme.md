@@ -1,7 +1,7 @@
 http://code.google.com/p/microsoft-translator-java-api/
 
 How to use:
-```processing
+```java
 void setup() {
   size(400,400);
   smooth();
