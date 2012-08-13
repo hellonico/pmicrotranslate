@@ -12,5 +12,5 @@ void setup() {
   str = translation.translate("Il fait un temps magnifique aujourd'hui!", "ar");
   
   font = createFont("",24);
-  
+ }
 ```
